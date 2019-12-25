@@ -115,7 +115,15 @@ public class DGraph implements graph{
 	@Override
 	public int edgeSize() 
 	{
-		return edgeCol.size();
+		int a=0;
+		for ( Map.Entry<Integer,node_data> e: nodeCol.entrySet()) 
+		{
+				if(edgeCol.get(e.getKey())!=null)
+				{
+					a=a+edgeCol.get(e.getKey()).size();
+				}
+		}
+		return a;
 	}
 
 	@Override
