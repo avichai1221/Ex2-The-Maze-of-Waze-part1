@@ -27,7 +27,11 @@ public class NodeData implements node_data {
 		this.info=i; 
 		this.tag=t;
 	}
-	
+	public NodeData( Point3D p1, int k, double weight) {
+		this.key=k;
+		this.p=p1; 
+		this.w=weight; 
+	}
 	@Override
 	public int getKey() {
 		return this.key;
@@ -77,11 +81,6 @@ public class NodeData implements node_data {
 	}
 	public String toString()
 	{
-		String s="";
-		
-	    s=s+"--key:"+ this.key+",point3D:"+this.p+",weight:"+this.w+",info:"+this.info+",tag:"+this.tag;
-	
-		return s;
-
+		return ""+key;
 	}
 }
