@@ -2,8 +2,10 @@ package algorithms;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
+import java.util.Stack;
 
 import dataStructure.DGraph;
 import dataStructure.NodeData;
@@ -27,9 +30,9 @@ import utils.Point3D;
  * @author 
  *
  */
-public class Graph_Algo implements graph_algorithms{
+public class Graph_Algo implements graph_algorithms,Serializable{
 
-
+	private static final long serialVersionUID = 1L;
 
 	private graph d=new DGraph();
 
@@ -66,7 +69,7 @@ public class Graph_Algo implements graph_algorithms{
 			ObjectOutputStream oos = new ObjectOutputStream(myFile);
 			oos.writeObject(d);
 			oos.close();
-		}catch(Exception e){
+		}catch(IOException e){
 			e.printStackTrace();
 		}
 	}
@@ -105,7 +108,7 @@ public class Graph_Algo implements graph_algorithms{
 		for (edge_data e:edge) {
 			
 			node_data help=d.getNode(e.getDest());
-			if((help.getTag()==0))
+			
 				help.setTag(1);
 			
 			if(help.getTag()==1)
@@ -113,7 +116,7 @@ public class Graph_Algo implements graph_algorithms{
 		
 			chaek(d.getE(help.getKey()));
 			
-		
+			
 		
 				
 			
@@ -144,64 +147,68 @@ public class Graph_Algo implements graph_algorithms{
 
 		{
 
-			entry.setTag(-1);//Tag contains the predecessor`s id
+			entry.setTag(-1);
 
-			entry.setInfo("FALSE");//info contains boolean visited or not
+			entry.setInfo("FALSE");
 
 			if(entry.getKey()==src)
 
-				entry.setWeight(0);//set src vertex`s weight to 0
+				entry.setWeight(0);
 
 			else
 
-				entry.setWeight(Double.MAX_VALUE);//setting all Nodes weight to infinity
+				entry.setWeight(Double.MAX_VALUE);
 
 		}
 
 	}
 	@Override
-	public double shortestPathDist(int src, int dest)//dijkstra algorithm O(V*E)
+	public double shortestPathDist(int src, int dest)//dijkstra 
 
 	{
 
-		node_data current;
 
-		PriorityQueue<node_data> q=new PriorityQueue<>(d.nodeSize(),new Vertex_Comperator());
+		putTag0(d);
 
-		initGraph(src);
+		Tags1(src,d);
 
-		q.addAll(d.getV());
+		if(d.getNode(dest).getTag()!=1) {
 
-		while(!q.isEmpty())
+			System.out.println("There is no any posible path between those nodes");
 
-		{
+			return -1;
 
-			current=q.remove();
+		}
 
-			if(d.getE(current.getKey()) !=null)
-			{
+		SetToInf(d);
 
-				Collection<edge_data> map=d.getE(current.getKey());
+		d.getNode(src).setWeight(0);
 
-				for(edge_data edge:map)//iterate over all edges going out from current vertex
+		Collection<node_data> notVisited=new LinkedList<>(d.getV());
 
-				{
+		node_data minWeight;
 
-					node_data dst=d.getNode(edge.getDest());
+		while (!notVisited.isEmpty()) {
 
-					if(dst.getInfo().equals("FALSE")) //we skip dst vertex if visited already 
+			
 
-					{
+			minWeight = findMinNode(notVisited);
 
-						if(current.getWeight()+edge.getWeight()<dst.getWeight())
+		
 
-						{
+			for(edge_data e : d.getE(minWeight.getKey())) {
 
-							dst.setWeight(current.getWeight()+edge.getWeight());
+				node_data neighbor = d.getNode(e.getDest());
 
-							dst.setTag(current.getKey());//set dst predcessor to be current vertex
+				if(neighbor.getInfo() != "done") {
 
-						}
+					double distance = minWeight.getWeight() + e.getWeight();
+
+					if(distance < neighbor.getWeight()) {
+
+						neighbor.setWeight(distance);
+
+						neighbor.setTag(minWeight.getKey());
 
 					}
 
@@ -209,11 +216,90 @@ public class Graph_Algo implements graph_algorithms{
 
 			}
 
-			current.setInfo("TRUE");
+			// Mark the node as "finished", and remove it from the collection
+
+			minWeight.setInfo("done");
+
+			notVisited.remove(minWeight);
 
 		}
 
-		return d.getNode(dest).getWeight();
+		// Check if the distance is infinity, which means there is no shortest path. If so returns -1
+
+		double ans = d.getNode(dest).getWeight();
+
+		if(ans == Double.MAX_VALUE) 
+
+			return -1;
+
+		else
+
+			return ans;
+
+	}
+	private static void Tags1(int key,graph g) {
+
+		Stack<Integer> Stack=new Stack<Integer>();
+
+		Stack.push(key);
+
+		while(!Stack.isEmpty()) {
+
+			node_data n=g.getNode(Stack.peek());
+
+			n.setTag(1);
+
+			Stack.pop();
+
+			for(edge_data itr:g.getE(n.getKey())) {
+
+				boolean isExsits=g.getNode(itr.getDest())!=null;
+
+				boolean NotPassYet=g.getNode(itr.getDest()).getTag()==0;
+
+				if(isExsits&&NotPassYet) {
+
+					Stack.push(itr.getDest());
+
+					g.getNode(itr.getDest()).setTag(1);
+
+
+
+				}
+
+			}
+
+		}
+
+	}
+	private static node_data findMinNode(Collection<node_data> nodes) {
+
+		Iterator<node_data> itr = nodes.iterator();
+
+		node_data minWeight = itr.next();
+
+		for(node_data n : nodes) {
+
+			if(n.getWeight() < minWeight.getWeight())
+
+				minWeight = n;
+
+		}
+
+		return minWeight;
+
+	}
+	private static void SetToInf(graph g) {
+
+		for(node_data n : g.getV()) {
+
+			n.setWeight(Double.MAX_VALUE);
+
+			n.setInfo("");
+
+			n.setTag(0);
+
+		}
 
 	}
 
