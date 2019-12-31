@@ -20,6 +20,7 @@ import dataStructure.NodeData;
 import dataStructure.edge_data;
 import dataStructure.graph;
 import dataStructure.node_data;
+import utils.Point3D;
 /**
  * This empty class represents the set of graph-theory algorithms
  * which should be implemented as part of Ex2 - Do edit this class.
@@ -29,33 +30,19 @@ import dataStructure.node_data;
 public class Graph_Algo implements graph_algorithms{
 
 
-	private HashMap<Integer,node_data> nodeCol=new HashMap<Integer,node_data>();
-	private HashMap<Integer,edge_data> edgeCol1=new HashMap<Integer,edge_data>();
-	private HashMap<Integer,HashMap<Integer,edge_data>> edgeCol=new HashMap<Integer,HashMap<Integer,edge_data>>();
-	private DGraph d=new DGraph();
 
+	private graph d=new DGraph();
+
+
+	public Graph_Algo()
+	{
+		
+	}
 	@Override
-	public void init(graph g) {
+	public void init(graph g) 
+	{
 
-		for(node_data n: g.getV()) {
-			int k=n.getKey(); 
-			nodeCol.put(k, n);
-
-			if(g.getNode(k)!=null &&g.getE(k)!=null) 
-			{
-				for (edge_data e: g.getE(k)) {
-					if(edgeCol.containsKey(k)) {
-						edgeCol.get(k).put(e.getDest(),e);
-					}
-
-					edgeCol1.put(k, e);
-					edgeCol.put(k, edgeCol1);
-				}
-			}
-
-		}
-
-		d=new DGraph(nodeCol,edgeCol);	
+		d=g;	
 	}
 	@Override
 	public void init(String file_name) {
@@ -97,9 +84,10 @@ public class Graph_Algo implements graph_algorithms{
 		
 		boolean ans=false;
 		for(node_data n: d.getV()) {
-				
+			if(d.getNode(n.getKey())!=null)	{
 			n.setTag(1);
 			chaek(d.getE(n.getKey()));
+			}
 			
 			
 		}
@@ -113,27 +101,33 @@ public class Graph_Algo implements graph_algorithms{
 	}
 	private void chaek(Collection<edge_data> edge) {
 		
+		
 		for (edge_data e:edge) {
 			
-			node_data help=nodeCol.get(e.getDest());
-			if(help.getTag()==0)
+			node_data help=d.getNode(e.getDest());
+			if((help.getTag()==0))
 				help.setTag(1);
 			
 			if(help.getTag()==1)
 				return;
 		
 			chaek(d.getE(help.getKey()));
-		}	
+			
 		
-	
+		
+				
+			
+			}
 	
 	}
 	private void putTag0(graph g) {
 		
 		for(node_data n : g.getV()) {
 			int k=n.getKey(); 
-			g.getNode(k).setTag(0);
-		}
+			if(g.getNode(k)!=null) {
+				g.getNode(k).setTag(0);
+				}
+			}
 	}
 	private boolean chaekTag1(graph g) {
 		for(node_data n : g.getV()) {
@@ -146,21 +140,21 @@ public class Graph_Algo implements graph_algorithms{
 
 	{
 
-		for(Entry<Integer, node_data> entry : nodeCol.entrySet()) 
+		for(node_data entry : d.getV()) 
 
 		{
 
-			entry.getValue().setTag(-1);//Tag contains the predecessor`s id
+			entry.setTag(-1);//Tag contains the predecessor`s id
 
-			entry.getValue().setInfo("FALSE");//info contains boolean visited or not
+			entry.setInfo("FALSE");//info contains boolean visited or not
 
-			if(entry.getValue().getKey()==src)
+			if(entry.getKey()==src)
 
-				entry.getValue().setWeight(0);//set src vertex`s weight to 0
+				entry.setWeight(0);//set src vertex`s weight to 0
 
 			else
 
-				entry.getValue().setWeight(Double.MAX_VALUE);//setting all Nodes weight to infinity
+				entry.setWeight(Double.MAX_VALUE);//setting all Nodes weight to infinity
 
 		}
 
@@ -172,11 +166,11 @@ public class Graph_Algo implements graph_algorithms{
 
 		node_data current;
 
-		PriorityQueue<node_data> q=new PriorityQueue<>(nodeCol.size(),new Vertex_Comperator());
+		PriorityQueue<node_data> q=new PriorityQueue<>(d.nodeSize(),new Vertex_Comperator());
 
 		initGraph(src);
 
-		q.addAll(nodeCol.values());
+		q.addAll(d.getV());
 
 		while(!q.isEmpty())
 
@@ -184,17 +178,16 @@ public class Graph_Algo implements graph_algorithms{
 
 			current=q.remove();
 
-			if(edgeCol.containsKey(current.getKey()))
-
+			if(d.getE(current.getKey()) !=null)
 			{
 
-				HashMap<Integer,edge_data> map=edgeCol.get(current.getKey());
+				Collection<edge_data> map=d.getE(current.getKey());
 
-				for(edge_data edge:map.values())//iterate over all edges going out from current vertex
+				for(edge_data edge:map)//iterate over all edges going out from current vertex
 
 				{
 
-					node_data dst=nodeCol.get(edge.getDest());
+					node_data dst=d.getNode(edge.getDest());
 
 					if(dst.getInfo().equals("FALSE")) //we skip dst vertex if visited already 
 
@@ -220,7 +213,7 @@ public class Graph_Algo implements graph_algorithms{
 
 		}
 
-		return nodeCol.get(dest).getWeight();
+		return d.getNode(dest).getWeight();
 
 	}
 
@@ -234,14 +227,14 @@ public class Graph_Algo implements graph_algorithms{
 
 		{
 
-			ans.add(nodeCol.get(src));
+			ans.add(d.getNode(src));
 			return ans;
 
 		}
 
 
 
-		node_data runner=nodeCol.get(dest);
+		node_data runner=d.getNode(dest);
 
 		while(runner.getKey()!=src)//make us stop after adding drc vertex to the List
 
@@ -249,11 +242,11 @@ public class Graph_Algo implements graph_algorithms{
 
 			ans.add(new NodeData(runner.getLocation(),runner.getKey(),runner.getWeight()));
 
-			runner=nodeCol.get(runner.getTag());
+			runner=d.getNode(runner.getTag());
 
 		}
 
-		ans.add(nodeCol.get(src));
+		ans.add(d.getNode(src));
 		Collections.reverse(ans);
 		return ans;
 
@@ -288,9 +281,30 @@ public class Graph_Algo implements graph_algorithms{
 	}
 
 	@Override
-	public graph copy() {
-		graph g=new DGraph(nodeCol,edgeCol);
-		return g;
+	public graph copy() 
+	{
+		HashMap<Integer,node_data> nodeCol=new HashMap<Integer,node_data>();
+		HashMap<Integer,edge_data> edgeCol1=new HashMap<Integer,edge_data>();
+		HashMap<Integer,HashMap<Integer,edge_data>> edgeCol=new HashMap<Integer,HashMap<Integer,edge_data>>();
+		for(node_data n: d.getV()) {
+			int k=n.getKey(); 
+			nodeCol.put(k, n);
+
+			if(d.getNode(k)!=null &&d.getE(k)!=null) 
+			{
+				for (edge_data e: d.getE(k)) {
+					if(edgeCol.containsKey(k)) {
+						edgeCol.get(k).put(e.getDest(),e);
+					}
+
+					edgeCol1.put(k, e);
+					edgeCol.put(k, edgeCol1);
+				}
+			}
+
+		}
+		d=new DGraph(nodeCol, edgeCol);
+		return d;
 		
 		
 	}
@@ -323,5 +337,10 @@ public class Graph_Algo implements graph_algorithms{
 		}
 
 	}
+	@Override
+	public String toString() {
+		return "Graph_Algo [d=" + d + "]";
+	}
+	
 
 }
