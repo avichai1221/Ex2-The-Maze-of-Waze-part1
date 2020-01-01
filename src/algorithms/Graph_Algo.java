@@ -36,17 +36,27 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 
 	private graph d=new DGraph();
 
-
+	/*
+	 *  dafult constractor
+	 */
 	public Graph_Algo()
 	{
 		
 	}
+	/**
+	 * Init this set of algorithms on the parameter - graph.
+	 * @param g
+	 */
 	@Override
 	public void init(graph g) 
 	{
 
 		d=g;	
 	}
+	/**
+	 * Init a graph from file
+	 * @param file_name
+	 */
 	@Override
 	public void init(String file_name) {
 
@@ -60,7 +70,10 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		}
 
 	}
-
+	/** Saves the graph to a file.
+	 * 
+	 * @param file_name
+	 */
 	@Override
 	public void save(String file_name) {
 
@@ -74,6 +87,11 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		}
 	}
 
+	/**
+	 * Returns true if and only if (iff) there is a valid path from EVREY node to each
+	 * other node. NOTE: assume directional graph - a valid path (a-->b) does NOT imply a valid path (b-->a).
+	 * @return
+	 */
 	@Override
 	public boolean isConnected() {
 
@@ -104,7 +122,7 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 	}
 	private void chaek(Collection<edge_data> edge) {
 		
-		
+		if(edge!=null) {
 		for (edge_data e:edge) {
 			
 			node_data help=d.getNode(e.getDest());
@@ -116,13 +134,12 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		
 			chaek(d.getE(help.getKey()));
 			
-			
-		
-				
-			
 			}
-	
+		}
 	}
+	/*
+	 * put 0 on all tags
+	 */
 	private void putTag0(graph g) {
 		
 		for(node_data n : g.getV()) {
@@ -132,6 +149,9 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 				}
 			}
 	}
+	/*
+	 * cheak if the tag is 1
+	 */
 	private boolean chaekTag1(graph g) {
 		for(node_data n : g.getV()) {
 			if(g.getNode(n.getKey()).getTag()!=1)
@@ -139,9 +159,14 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		}
 		return true;
 		}
-	
+	/**
+	 * returns the length of the shortest path between src to dest
+	 * @param src - start node
+	 * @param dest - end (target) node
+	 * @return
+	 */
 	@Override
-	public double shortestPathDist(int src, int dest)//dijkstra 
+	public double shortestPathDist(int src, int dest)  //dijkstra 
 
 	{
 
@@ -152,7 +177,7 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 
 		if(d.getNode(dest).getTag()!=1) {
 
-			System.out.println("There is no any posible path between those nodes");
+			System.out.println("no posible path");
 
 			return -1;
 
@@ -280,7 +305,14 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		}
 
 	}
-
+	/**
+	 * returns the the shortest path between src to dest - as an ordered List of nodes:
+	 * src--> n1-->n2-->...dest
+	 * see: https://en.wikipedia.org/wiki/Shortest_path_problem
+	 * @param src - start node
+	 * @param dest - end (target) node
+	 * @return
+	 */
 	@Override
 	public List<node_data> shortestPath(int src, int dest) 
 
@@ -300,7 +332,7 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 
 		node_data runner=d.getNode(dest);
 
-		while(runner.getKey()!=src)//make us stop after adding drc vertex to the List
+		while(runner.getKey()!=src)
 
 		{
 
@@ -315,7 +347,14 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		return ans;
 
 	}
-
+	/**
+	 * computes a relatively short path which visit each node in the targets List.
+	 * Note: this is NOT the classical traveling salesman problem, 
+	 * as you can visit a node more than once, and there is no need to return to source node - 
+	 * just a simple path going over all nodes in the list. 
+	 * @param targets
+	 * @return
+	 */
 	@Override
 	public List<node_data> TSP(List<Integer> targets) 
 	{
@@ -343,7 +382,10 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		return TSP;
 
 	}
-
+	/** 
+	 * Compute a deep copy of this graph.
+	 * @return
+	 */
 	@Override
 	public graph copy() 
 	{
@@ -369,23 +411,19 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		}
 		d=new DGraph(nodeCol, edgeCol);
 		return d;
-		
-		
 	}
 	private class Vertex_Comperator implements Comparator<node_data> 
-
 	{
 
 		public Vertex_Comperator()
 
 		{
 
-
-
 		}
 
-
-
+		/*
+		 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+		 */
 		@Override
 
 		public int compare(node_data v2,node_data v1)
@@ -401,10 +439,28 @@ public class Graph_Algo implements graph_algorithms,Serializable{
 		}
 
 	}
+	/*
+	 * toString function
+	 */
 	@Override
 	public String toString() {
 		return "Graph_Algo [d=" + d + "]";
 	}
-	
+	/*
+	 * return the collection node
+	 */
+	public Collection<node_data> getV()
+	{
+		return d.getV();
+	}
+	/*
+	 * return the collection edge
+	 */
+	public Collection<edge_data> getE(int node_id)
+	{
+
+		return d.getE(node_id);
+
+	}
 
 }
