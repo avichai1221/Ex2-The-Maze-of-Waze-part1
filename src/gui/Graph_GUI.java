@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 import utils.*;
 import dataStructure.*;
+
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -21,10 +23,13 @@ public class Graph_GUI extends JFrame implements ActionListener
 
 	public Graph_GUI (DGraph d)
 	{
+
 		this.Dgraph=d;
 		initGUI();
-		
+				
 	}
+	
+	 
 
 	private void initGUI() 
 	{
@@ -63,6 +68,7 @@ public class Graph_GUI extends JFrame implements ActionListener
 		menu.add(isConnected);
 		menu.add(fromFile);
 		menu.add(SPD);
+
 
 	}
 
@@ -136,11 +142,11 @@ public class Graph_GUI extends JFrame implements ActionListener
 		if(str.equals("TSP"))
 		{
 			ArrayList<Integer>arr=new ArrayList<Integer>();
-			String NumOfNodes = JOptionPane.showInputDialog(newWindow,"how much Nodes do you want to cheak?");
+			String NumOfNodes = JOptionPane.showInputDialog(newWindow,"how much Nodes do you want to check?");
 			
 			for (int i = 0; i <Integer.parseInt(NumOfNodes); i++)
 			{
-				String NumForList = JOptionPane.showInputDialog(newWindow,"choose a node for cheak");
+				String NumForList = JOptionPane.showInputDialog(newWindow,"choose a node for check");
 				arr.add(Integer.parseInt(NumForList));
 			}
 			
@@ -175,7 +181,9 @@ public class Graph_GUI extends JFrame implements ActionListener
 
 	}
 
-
-
-
+	
+	
+	
+	
+	
 }
