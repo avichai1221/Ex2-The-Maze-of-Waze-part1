@@ -1,10 +1,12 @@
 package dataStructure;
 
+import java.awt.font.NumericShaper.Range;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import algorithms.Graph_Algo;
+
 import utils.Point3D;
 
 public class Main {
@@ -17,42 +19,49 @@ public class Main {
 
 		Point3D p=new Point3D(1,2,3);
 
-		NodeData n=new NodeData(p,1, 0);
+		NodeData n=new NodeData(p,2, 0);
 
 		x.addNode(n);
 
 		p=new Point3D(3,2,1);
 
-		NodeData m=new NodeData(p,2, 0);
+		NodeData m=new NodeData(p,4, 0);
 
 		x.addNode(m);
 
 		p=new Point3D(3,2,1);
 
-		NodeData v=new NodeData(p,3,0);
+		NodeData v=new NodeData(p,5,0);
 		
 		x.addNode(v);
 
-		x.connect(1, 2, 10);
+		x.connect(2, 5, 13);
 
-		x.connect(2, 1, 8);
+		//x.connect(5, 2, 4);
 
-		x.connect(1, 3, 100);
+		x.connect(2, 4, 2);
 
-		x.connect(2, 3, 1);
-		x.connect(3, 2, 1);
-		x.connect(3, 1, 1);
-		System.out.println(x.toString());
+		//x.connect(2, 3, 1);
+		x.connect(4, 5, 2);
+//		x.connect(3, 1, 1);
+		//System.out.println(x.toString());
 		Graph_Algo g1 = new Graph_Algo();
-
+	
+		
 		g1.init(x);
+		graph copy=g1.copy();
+		System.out.println(copy.getV().toString());
+		System.out.println(copy.getE(n.getKey()));
+		g1.save("output.txt");
+		System.out.println(g1.toString());
 		System.out.println(	g1.isConnected());
 		List<Integer> list=new ArrayList<>();
 		for(node_data node :x.getV())
 			list.add(node.getKey());
-
-		System.out.println(g1.shortestPath(1, 2));
-		System.out.println(g1.TSP(list).toString());
+		
+		System.out.println(g1.shortestPath(2, 5));
+		System.out.println(g1.shortestPathDist(4, 2));
+		//System.out.println(g1.TSP(list).toString());
 	
 		Point3D p1=new Point3D (1,1);
 		Point3D p2=new Point3D (3,2);
@@ -85,6 +94,7 @@ public class Main {
 		NodeData n14=new NodeData(p14,14,3);
 		
 		graph g=new DGraph();
+		
 		g.addNode(n1);
 		g.addNode(n2);
 		g.addNode(n3);
@@ -119,9 +129,13 @@ public class Main {
 		g.connect(14, 1, 43.2);
 		g.connect(14, 7, 98.6);
 		Graph_Algo y=new Graph_Algo();
+		
 		y.init(g);
+		System.out.println(y.shortestPath(2,7));
 		System.out.println(y.isConnected());
-//		Graph_GUI gu=new Graph_GUI();
+
+		
+//		Graph_gui gu=new Graph_gui();
 //		Range rx=new Range(-20,20);
 //		Range ry=new Range(-22,6);
 //		gu.drawGraph(750,750,rx,ry,g);
