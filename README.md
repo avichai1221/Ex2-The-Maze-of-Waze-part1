@@ -18,3 +18,9 @@ in this class you can display a graph, save it, run algorithms on it, and displa
  and also explanations about the data structure,display
  system and how to use the project,download and run.
  
+ 
+![](https://github.com/avichai1221/Ex2-java/blob/master/ex.PNG?raw=true)
+
+This image is for demonstration purposes.
+
+See you on Wiki!
