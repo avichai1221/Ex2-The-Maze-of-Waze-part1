@@ -30,7 +30,9 @@ public class Graph_GUI extends JFrame implements ActionListener
 	}
 	
 	 
-
+/*
+ * create window,exit on window,menu and Buttons on menu
+ */
 	private void initGUI() 
 	{
 		this.setSize(700, 700);                           //create window
@@ -71,7 +73,9 @@ public class Graph_GUI extends JFrame implements ActionListener
 
 
 	}
-
+/*
+ * draw the graph
+ */
 	public void paint(Graphics g)
 	{
 		super.paint(g);
@@ -120,7 +124,9 @@ public class Graph_GUI extends JFrame implements ActionListener
 
 	}
 
- 
+  /*
+  * Determines what action to perform on each tab on menu
+  */
 	@Override
 	public void actionPerformed(ActionEvent e) {
      String str = e.getActionCommand();
